@@ -30,10 +30,14 @@ while running:
 		code,data = funs.decode(message)
 		if code == codes.sending_command:
 			command = data
-			print('executing :',command)
-			os.system(command)
+			print('--executing :',command)
+			return_code = os.system(command)
+			if return_code is None:
+				print('--return_code is ',None)
+				return_code = 1
+			connection.send(funs.encode(codes.finished,return_code))
 		if code == codes.exit:
-			print('got exit code')
+			print('--got exit code')
 			running=False
 	#connection.send(funs.encode(codes.idle))
 
