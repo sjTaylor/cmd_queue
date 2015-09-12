@@ -2,32 +2,33 @@ import socket
 import struct
 import select
 import codes
-import funs
+from funs import *
+from config import *
 import os
+import sys
 
-server_ip   = 'localhost'
-server_port = 12345
+config = Config()
+config.get_args(sys.argv)
 
 try:
-	connection = socket.create_connection((server_ip,server_port))
+	connection = socket.create_connection((config.server_ip,config.server_port))
 except:
 	print('could not connect to server')
-	exit()
+	exit(1)
 
 running = True
-
 
 
 while running:
 	readable, foo1, foo2 = select.select([connection],[],[],2)
 
-	for qq in funs.getinput():
+	for qq in getinput():
 		if 'exit' in qq:
 			running=False
 
 	for s in readable:
-		message = funs.recv(s)
-		code,data = funs.decode(message)
+		message = recv(s)
+		code,data = decode(message)
 		if code == codes.sending_command:
 			command = data
 			print('--executing :',command)
@@ -35,14 +36,11 @@ while running:
 			if return_code is None:
 				print('--return_code is ',None)
 				return_code = 1
-			print('ret val of send:',funs.send(connection,funs.encode(codes.finished,return_code)))
+			print('ret val of send:',send(connection,encode(codes.finished,return_code)))
 		if code == codes.exit:
 			print('--got exit code')
 			running=False
-	#connection.send(funs.encode(codes.idle))
-
-
-
 
 connection.shutdown(socket.SHUT_RDWR)
 connection.close()
+exit(0)
