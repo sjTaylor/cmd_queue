@@ -37,7 +37,7 @@ while True:
 			idle_clients.append(client_socket)
 			#print("Connection from", address)
 		else:
-			message = s.recv(1024)
+			message = funs.recv(s)
 			if message:
 				code, data = funs.decode(message)
 				#print('recieved',data)
@@ -48,13 +48,13 @@ while True:
 
 	for s in idle_clients:
 		if len(command_list) == 0:
-			s.send(funs.encode(codes.exit))
+			print('ret val of send',funs.send(s,funs.encode(codes.exit)))
 			idle_clients.remove(s)
 			read_list.remove(s)
 		else:
 			print('--sending command :',command_list[0])
-			s.send(funs.encode(codes.sending_command,command_list[0]))
+			print('ret val of send',funs.send(s,funs.encode(codes.sending_command,command_list[0])))
 			del command_list[0]
-	os.system('sleep 1s')
 	if len(read_list) == 1 and len(command_list) == 0:
+		os.system('sleep 1s')
 		exit()			

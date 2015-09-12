@@ -26,16 +26,16 @@ while running:
 			running=False
 
 	for s in readable:
-		message = s.recv(1000)
+		message = funs.recv(s)
 		code,data = funs.decode(message)
 		if code == codes.sending_command:
 			command = data
 			print('--executing :',command)
-			return_code = os.system(command)
+			return_code = os.system(command + ' > fdsfsisns')
 			if return_code is None:
 				print('--return_code is ',None)
 				return_code = 1
-			connection.send(funs.encode(codes.finished,return_code))
+			print('ret val of send:',funs.send(connection,funs.encode(codes.finished,return_code)))
 		if code == codes.exit:
 			print('--got exit code')
 			running=False
