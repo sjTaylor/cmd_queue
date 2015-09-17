@@ -6,6 +6,7 @@ from funs import *
 from config import *
 import os
 import sys
+import subprocess
 
 config = Config()
 config.get_args(sys.argv)
@@ -32,7 +33,7 @@ while running:
 		if code == codes.sending_command:
 			command = data
 			print('--executing :',command)
-			return_code = os.system(command + ' > fdsfsisns')
+			return_code = subprocess.call(command,shell=True)
 			if return_code is None:
 				print('--return_code is ',None)
 				return_code = 1
