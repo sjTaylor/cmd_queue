@@ -3,6 +3,7 @@ class Config:
 		self.server_ip   = 'localhost'
 		self.server_port = 1234567
 		self.target_working_directory = '.'
+		self.wd_is_list = False
 		#timeout is in seconds
 		self.cmd_timeout = 10
 		self.log_file = 'log.txt'

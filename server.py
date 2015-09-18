@@ -16,14 +16,17 @@ server_socket.bind(('',config.server_port))
 server_socket.listen(16)
 read_list = [server_socket]
 
-clients      = {}
+clients      = []
 idle_clients = []
 
-command_list_file = open('commands.txt','r')
-command_list = []
-for line in command_list_file:
-	#print(line.strip())
-	command_list.append(line.strip())
+last_id = 0
+cmd_dex = 0
+command_list = list_from_file(config.cmd_file)
+working_directory = config.target_working_directory
+if wd_is_list:
+	working_directory = Varlist(list_from_file(working_directory))
+else:
+	working_directory = Varlist([working_directory])
 
 while True:
 	readable, writable, errored = select.select(read_list, [], [],1)
@@ -33,31 +36,17 @@ while True:
 			exit()
 
 	for s in readable:
-		if s is server_socket:
-			#print("accepting connection")
-			client_socket, address = server_socket.accept()
-			read_list.append(client_socket)
-			idle_clients.append(client_socket)
-			#print("Connection from", address)
-		else:
-			message = recv(s)
-			if message:
-				code, data = decode(message)
-				#print('recieved',data)
-				if code == codes.idle and s not in idle_clients:
-					idle_clients.append(s)
-				elif code == codes.finished:
-					print('--command finished with exit code :',data)
+		#if s is server_socket:
+			#the read list is just goint to handle new connections
+		client_socket, address = server_socket.accept()
+		last_id+=1
+		clients.append(ClientInterface(client_socket,last_id))
+		clients[-1].initialize(working_directory[0],config.output_folder)
 
-	for s in idle_clients:
-		if len(command_list) == 0:
-			print('ret val of send',send(s,encode(codes.exit)))
-			idle_clients.remove(s)
-			read_list.remove(s)
-		else:
-			print('--sending command :',command_list[0])
-			print('ret val of send',send(s,encode(codes.sending_command,command_list[0])))
-			del command_list[0]
+	for c in clients:
+		if c.poll():
+			pass
+	
 	if len(read_list) == 1 and len(command_list) == 0:
 		os.system('sleep 1s')
 		exit()			

@@ -4,10 +4,15 @@ import select
 import codes
 import socket
 
+def file_to_list(filename):
+	thefile = open(filename,'r')
+	lst = []
+	for line in thefile:
+		lst.append(line.strip())
+	return lst
+
 class VarList:
 	def __init__(self,arr=[]):
-		#need to clean up
-		#this is code from a different project
 		self.vals = arr
 
 	def __getitem__(self, dex):
@@ -18,14 +23,23 @@ class VarList:
 		return self.vals[index]		
 
 
-class Client():
+class ClientInterface():
 	def __init__(self,connection,id):
 		self.con=connection
 		self.id=id
 		self.cmdid = -1
 		self.error=False
+		self.initialized = False
 
-	def initialize(self):
+	def initialize(self,wd,od):
+		send(self.con,encode(codes.send_id,self.id))
+		send(self.con,encode(codes.send_wd,wd))
+		send(self.con,encode(codes.send_od,od))
+
+	def give_cmd(self,command):
+		send(self.con, encode(codes.sending_command,command))
+
+	def get_status(self):
 		pass
 
 	def poll(self):
