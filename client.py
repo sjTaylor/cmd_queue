@@ -31,6 +31,8 @@ while running:
 	for s in readable:
 		message = recv(s)
 		code,data = decode(message)
+		if code == codes.send_id:
+			myid = data
 		if code == codes.send_cmd:
 			command = data[1]
 			cmdnumber = data[0]
@@ -41,14 +43,20 @@ while running:
 											shell=True,
 											stdout=sstdout,
 											stderr=sstderr,
-											timeout=config.cmd_timout)
+											timeout=config.cmd_timeout)
+			sstdout.close()
+			sstderr.close()
 			if return_code is None:
 				print('--return_code is ',None)
 				return_code = 1
-			send(connection,encode(codes.finished,))
+			#cmd number, client id, return code
+			#print('stuff',cmdnumber,'blah',myid,'foo',return_code)
+			send(connection,encode(codes.finished,(cmdnumber,myid,return_code)))
 		if code == codes.exit:
 			print('--got exit code')
 			running=False
+		else:
+			send(connection,encode(codes.idle))
 
 connection.shutdown(socket.SHUT_RDWR)
 connection.close()

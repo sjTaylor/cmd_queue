@@ -22,11 +22,13 @@ idle_clients = []
 last_id = 0
 cmd_dex = 0
 command_list = list_from_file(config.cmd_file)
+print('cmd_list',command_list)
+
 working_directory = config.target_working_directory
-if wd_is_list:
-	working_directory = Varlist(list_from_file(working_directory))
+if config.wd_is_list:
+	working_directory = VarList(list_from_file(working_directory))
 else:
-	working_directory = Varlist([working_directory])
+	working_directory = VarList([working_directory])
 
 while True:
 	readable, writable, errored = select.select(read_list, [], [],1)
@@ -39,7 +41,7 @@ while True:
 		client_socket, address = server_socket.accept()
 		last_id+=1
 		clients.append(ClientInterface(client_socket,last_id))
-		clients[-1].initialize(working_directory[0],config.output_folder)
+		clients[-1].initialize()
 
 	for c in clients:
 		if c.poll():
@@ -48,13 +50,14 @@ while True:
 			if code in [codes.idle] and cmd_dex < len(command_list):
 				c.give_cmd(cmd_dex,command_list[cmd_dex])
 				cmd_dex+=1
-			else:
+			elif cmd_dex == len(command_list):
 				send(c.con,encode(codes.exit))
 				clients.remove(c)
 			if code in [codes.finished]:
+				#cmd number, client id, return code
 				print("Command :",data[0],'finished by client',data[1],'with return code',data[2])
 	
-	if len(clients) == 0:
+	if len(clients) == 0 and cmd_dex >= len(command_list):
 		print('commands finished.\nserver exiting')
 		os.system('sleep 1s')
 		exit()

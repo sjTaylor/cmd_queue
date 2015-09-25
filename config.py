@@ -1,7 +1,7 @@
 class Config:
 	def __init__(self):
 		self.server_ip   = 'localhost'
-		self.server_port = 1234567
+		self.server_port = 12345
 		self.target_working_directory = '.'
 		self.wd_is_list = False
 		#timeout is in seconds

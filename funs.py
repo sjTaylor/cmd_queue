@@ -4,7 +4,7 @@ import select
 import codes
 import socket
 
-def file_to_list(filename):
+def list_from_file(filename):
 	thefile = open(filename,'r')
 	lst = []
 	for line in thefile:
@@ -15,7 +15,7 @@ class VarList:
 	def __init__(self,arr=[]):
 		self.vals = arr
 
-	def __getitem__(self, dex):
+	def __getitem__(self, index):
 		if len(self.vals) is 0:
 			return None
 		if len(self.vals) <= index:
@@ -31,7 +31,7 @@ class ClientInterface():
 		self.error=False
 		self.initialized = False
 
-	def initialize(self,wd,od,to):
+	def initialize(self,wd=None,od=None,to=None):
 		send(self.con,encode(codes.send_id,self.id))
 		#send(self.con,encode(codes.send_wd,wd))
 		#send(self.con,encode(codes.send_od,od))
@@ -81,7 +81,7 @@ def encode(code,data=None):
 	ret = struct.pack('i',code)
 	if type(data) is str or code in [codes.send_wd,codes.send_od]:
 		ret += bytearray(data.encode('utf-8'))
-	if code in [codes.finished,codes.send_id]:
+	if code in [codes.send_id]:
 		ret += struct.pack('i',data)
 	if code in [codes.send_to]:
 		ret += struct.pack('f',data)
@@ -99,6 +99,8 @@ def decode(stuff):
 	ret = None
 	if code in [codes.exit,codes.idle]:
 		ret = None
+	elif code in [codes.send_id]:
+		ret = struct.unpack('i',stuff[4:])[0]
 	elif code in [codes.send_cmd]:
 		ret = []
 		ret.append(struct.unpack('i',stuff[4:4+4])[0])
