@@ -4,4 +4,5 @@ finished = 2
 send_id=3
 send_wd=4
 send_od=5
-sending_command = 8
+send_to=6
+send_cmd = 8

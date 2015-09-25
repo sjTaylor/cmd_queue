@@ -10,6 +10,7 @@ import subprocess
 
 config = Config()
 config.get_args(sys.argv)
+myid = 0
 
 try:
 	connection = socket.create_connection((config.server_ip,config.server_port))
@@ -30,14 +31,21 @@ while running:
 	for s in readable:
 		message = recv(s)
 		code,data = decode(message)
-		if code == codes.sending_command:
-			command = data
+		if code == codes.send_cmd:
+			command = data[1]
+			cmdnumber = data[0]
 			print('--executing :',command)
-			return_code = subprocess.call(command,shell=True)
+			sstdout = open('cmd-'+pad(cmdnumber,config.padding)+'-stdout','w')
+			sstderr = open('cmd-'+pad(cmdnumber,config.padding)+'-stderr','w')
+			return_code = subprocess.call(command,
+											shell=True,
+											stdout=sstdout,
+											stderr=sstderr,
+											timeout=config.cmd_timout)
 			if return_code is None:
 				print('--return_code is ',None)
 				return_code = 1
-			print('ret val of send:',send(connection,encode(codes.finished,return_code)))
+			send(connection,encode(codes.finished,))
 		if code == codes.exit:
 			print('--got exit code')
 			running=False

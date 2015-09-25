@@ -9,7 +9,8 @@ class Config:
 		self.log_file = 'log.txt'
 		self.cmd_file = 'commands.txt'
 		#will be the folder where the output of the commands is saved
-		self.output_folder = None
+		self.output_folder = './output_logs'
+		self.padding = 6
 
 	def get_args(self,args):
 		if len(args) % 2 != 1:

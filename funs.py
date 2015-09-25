@@ -31,13 +31,14 @@ class ClientInterface():
 		self.error=False
 		self.initialized = False
 
-	def initialize(self,wd,od):
+	def initialize(self,wd,od,to):
 		send(self.con,encode(codes.send_id,self.id))
-		send(self.con,encode(codes.send_wd,wd))
-		send(self.con,encode(codes.send_od,od))
+		#send(self.con,encode(codes.send_wd,wd))
+		#send(self.con,encode(codes.send_od,od))
+		#send(self.con,encode(codes.send_to,to))
 
-	def give_cmd(self,command):
-		send(self.con, encode(codes.sending_command,command))
+	def give_cmd(self,number,command):
+		send(self.con, encode(codes.send_cmd,(number,command)))
 
 	def get_status(self):
 		pass
@@ -71,13 +72,24 @@ def recv(sock):
 			trig=True
 	return msg
 
+def pad(num,padding):
+	s = str(num)
+	diff = padding-len(s) 
+	return '0'*diff + s
 
 def encode(code,data=None):
 	ret = struct.pack('i',code)
-	if type(data) is str:
+	if type(data) is str or code in [codes.send_wd,codes.send_od]:
 		ret += bytearray(data.encode('utf-8'))
-	if code in [codes.finished]:
+	if code in [codes.finished,codes.send_id]:
 		ret += struct.pack('i',data)
+	if code in [codes.send_to]:
+		ret += struct.pack('f',data)
+	if code in [codes.send_cmd]:
+		ret += struct.pack('i',data[0])
+		ret += bytearray(data[1].encode('utf-8'))
+	if code in [codes.finished]:
+		ret += struct.pack('iii',data[0],data[1],data[2])
 	ret = struct.pack('i',len(ret)) + ret
 	return ret
 
@@ -87,10 +99,12 @@ def decode(stuff):
 	ret = None
 	if code in [codes.exit,codes.idle]:
 		ret = None
-	elif code in [codes.sending_command]:
-		ret = stuff[4:].decode('utf-8')
+	elif code in [codes.send_cmd]:
+		ret = []
+		ret.append(struct.unpack('i',stuff[4:4+4])[0])
+		ret.append(str(stuff[4+4:].decode('utf-8')))
 	elif code in [codes.finished]:
-		ret = struct.unpack('i',stuff[4:])[0]
+		ret = struct.unpack('iii',stuff[4:])
 	else:
 		ret = stuff[4:].decode('utf-8')
 	return (code, ret)

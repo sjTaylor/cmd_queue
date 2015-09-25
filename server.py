@@ -36,8 +36,6 @@ while True:
 			exit()
 
 	for s in readable:
-		#if s is server_socket:
-			#the read list is just goint to handle new connections
 		client_socket, address = server_socket.accept()
 		last_id+=1
 		clients.append(ClientInterface(client_socket,last_id))
@@ -45,8 +43,18 @@ while True:
 
 	for c in clients:
 		if c.poll():
-			pass
+			message = recv(c.con)
+			code,data = decode(message)
+			if code in [codes.idle] and cmd_dex < len(command_list):
+				c.give_cmd(cmd_dex,command_list[cmd_dex])
+				cmd_dex+=1
+			else:
+				send(c.con,encode(codes.exit))
+				clients.remove(c)
+			if code in [codes.finished]:
+				print("Command :",data[0],'finished by client',data[1],'with return code',data[2])
 	
-	if len(read_list) == 1 and len(command_list) == 0:
+	if len(clients) == 0:
+		print('commands finished.\nserver exiting')
 		os.system('sleep 1s')
-		exit()			
+		exit()
