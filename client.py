@@ -37,8 +37,8 @@ while running:
 			command = data[1]
 			cmdnumber = data[0]
 			print('--executing :',command)
-			sstdout = open('cmd-'+pad(cmdnumber,config.padding)+'-stdout','w')
-			sstderr = open('cmd-'+pad(cmdnumber,config.padding)+'-stderr','w')
+			sstdout = open(config.output_prefix+'cmd-'+pad(cmdnumber,config.padding)+'-stdout','w')
+			sstderr = open(config.output_prefix+'cmd-'+pad(cmdnumber,config.padding)+'-stderr','w')
 			return_code = subprocess.call(command,
 											shell=True,
 											stdout=sstdout,
