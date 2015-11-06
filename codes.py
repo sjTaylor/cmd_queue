@@ -6,3 +6,4 @@ send_wd=4
 send_od=5
 send_to=6
 send_cmd = 8
+disconnecting=9

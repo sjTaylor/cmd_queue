@@ -22,7 +22,7 @@ idle_clients = []
 last_id = 0
 cmd_dex = 0
 command_list = list_from_file(config.cmd_file)
-print('cmd_list',command_list)
+#print('cmd_list',command_list)
 
 working_directory = config.target_working_directory
 if config.wd_is_list:
@@ -38,24 +38,36 @@ while True:
 			exit()
 
 	for s in readable:
-		client_socket, address = server_socket.accept()
-		last_id+=1
-		clients.append(ClientInterface(client_socket,last_id))
-		clients[-1].initialize()
+		try:
+			client_socket, address = server_socket.accept()
+			last_id+=1
+			clients.append(ClientInterface(client_socket,last_id))
+			clients[-1].initialize()
+			print("new client : id =",clients[-1].id,', address =',address)
+		except:
+			print('a potential client could not connect')
 
 	for c in clients:
-		if c.poll():
-			message = recv(c.con)
-			code,data = decode(message)
-			if code in [codes.idle] and cmd_dex < len(command_list):
-				c.give_cmd(cmd_dex,command_list[cmd_dex])
-				cmd_dex+=1
-			elif cmd_dex == len(command_list):
-				send(c.con,encode(codes.exit))
-				clients.remove(c)
-			if code in [codes.finished]:
-				#cmd number, client id, return code
-				print("Command :",data[0],'finished by client',data[1],'with return code',data[2])
+		try:
+			if c.poll():
+				message = recv(c.con)
+				code,data = decode(message)
+				if code in [codes.idle] and cmd_dex < len(command_list):
+					c.give_cmd(cmd_dex,command_list[cmd_dex])
+					cmd_dex+=1
+				elif code == codes.disconnecting:
+					print('Client ',c.id,'is disconnecting')
+					clients.remove(c)
+				elif cmd_dex == len(command_list):
+					send(c.con,encode(codes.exit))
+					clients.remove(c)
+				if code in [codes.finished]:
+					#cmd number, client id, return code
+					print("Command :",data[0],'finished by client',data[1],'with return code',data[2])
+		except:
+			print("connection issues with client",c.id)
+			print('-Command:', c.cmdid,'failed by client',c.id,'. Removing it from client list')
+			clients.remove(c)
 	
 	if len(clients) == 0 and cmd_dex >= len(command_list):
 		print('commands finished.\nserver exiting')

@@ -38,6 +38,7 @@ class ClientInterface():
 		#send(self.con,encode(codes.send_to,to))
 
 	def give_cmd(self,number,command):
+		self.cmdid=number
 		send(self.con, encode(codes.send_cmd,(number,command)))
 
 	def get_status(self):

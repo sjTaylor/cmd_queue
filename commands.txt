@@ -1,5 +1,10 @@
-sleep 1s
-sleep 1s
+pwd
+pwd
+pwd
+pwd
+pwd
+pwd
+pwd
+pwd
 ls
-jfksldj
-ls fd
+ls /media
