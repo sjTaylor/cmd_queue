@@ -1,7 +1,9 @@
 # cmd_queue
 
-This program is currently incomplete.
+To setup the program first copy defaults.py to config.py
 
-When it works i will update this readme to indicate how it works.
+Then edit config.py and run the programs 
+
+typing 'exit' and hitting enter will queue the server/client to terminate
 
 Licenced under the MIT Licence

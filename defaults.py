@@ -8,8 +8,8 @@ class Config:
 		self.cmd_timeout = 10
 		self.log_file = 'log.txt'
 		self.cmd_file = 'commands.txt'
-		#will be the folder where the output of the commands is saved
-		self.output_folder = './output_logs'
+		#will be prepended to log names
+		self.output_prefix = './output_logs/'
 		self.padding = 6
 
 	def get_args(self,args):

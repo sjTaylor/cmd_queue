@@ -2,10 +2,21 @@ import socket
 import select
 import struct
 import sys
-from funs import *
-from config import *
-import codes
 import os
+from funs import *
+import codes
+try:
+	from config import *
+except:
+	print('copying defaults')
+	defaults = open('defaults.py','r')
+	cfg = open('config.py','w')
+	for line in defaults:
+		cfg.write(line)
+	defaults.close()
+	cfg.close()
+	exit()
+	
 
 config = Config()
 config.get_args(sys.argv)
