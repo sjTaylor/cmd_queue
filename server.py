@@ -8,7 +8,7 @@ import codes
 try:
 	from config import *
 except:
-	print('copying defaults')
+	print('copying defaults',flush=True)
 	defaults = open('defaults.py','r')
 	cfg = open('config.py','w')
 	for line in defaults:
@@ -54,9 +54,9 @@ while True:
 			last_id+=1
 			clients.append(ClientInterface(client_socket,last_id))
 			clients[-1].initialize()
-			print("new client : id =",clients[-1].id,', address =',address)
+			print("new client : id =",clients[-1].id,', address =',address,flush=True)
 		except:
-			print('a potential client could not connect')
+			print('a potential client could not connect',flush=True)
 
 	for c in clients:
 		try:
@@ -67,20 +67,20 @@ while True:
 					c.give_cmd(cmd_dex,command_list[cmd_dex])
 					cmd_dex+=1
 				elif code == codes.disconnecting:
-					print('Client ',c.id,'is disconnecting')
+					print('Client ',c.id,'is disconnecting',flush=True)
 					clients.remove(c)
 				elif cmd_dex == len(command_list):
 					send(c.con,encode(codes.exit))
 					clients.remove(c)
 				if code in [codes.finished]:
 					#cmd number, client id, return code
-					print("Command :",data[0],'finished by client',data[1],'with return code',data[2])
+					print("Command :",data[0],'finished by client',data[1],'with return code',data[2],flush=True)
 		except:
-			print("connection issues with client",c.id)
-			print('-Command:', c.cmdid,'failed by client',c.id,'. Removing it from client list')
+			print("connection issues with client",c.id,flush=True)
+			print('-Command:', c.cmdid,'failed by client',c.id,'. Removing it from client list',flush=True)
 			clients.remove(c)
 	
 	if len(clients) == 0 and cmd_dex >= len(command_list):
-		print('commands finished.\nserver exiting')
+		print('commands finished.\nserver exiting',flush=True)
 		os.system('sleep 1s')
 		exit()

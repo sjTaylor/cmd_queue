@@ -17,7 +17,7 @@ os.chdir(config.target_working_directory)
 try:
 	connection = socket.create_connection((config.server_ip,config.server_port))
 except:
-	print('could not connect to server')
+	print('could not connect to server',flush=True)
 	exit(1)
 
 running = True
@@ -40,8 +40,8 @@ while running:
 			elif code == codes.send_cmd:
 				command = data[1]
 				cmdnumber = data[0]
-				print('Recieved command number :',cmdnumber)
-				print('--executing :',command)
+				print('Recieved command number :',cmdnumber,flush=True)
+				print('--executing :',command,flush=True)
 				sstdout = open(config.output_prefix+'cmd-'+pad(cmdnumber,config.padding)+'-stdout','w')
 				sstderr = open(config.output_prefix+'cmd-'+pad(cmdnumber,config.padding)+'-stderr','w')
 				return_code = subprocess.call(command,
@@ -52,18 +52,18 @@ while running:
 				sstdout.close()
 				sstderr.close()
 				if return_code is None:
-					print('--return_code is ',None)
+					print('--return_code is ',None,flush=True)
 					return_code = 1
 				#cmd number, client id, return code
 				#print('stuff',cmdnumber,'blah',myid,'foo',return_code)
 				send(connection,encode(codes.finished,(cmdnumber,myid,return_code)))
 			if code == codes.exit:
-				print('--got exit code')
+				print('--got exit code',flush=True)
 				running=False
 			else:
 				send(connection,encode(codes.idle))
 		except:
-			print('some issue occured. terminating')
+			print('some issue occured. terminating',flush=True)
 			exit(1)
 
 connection.shutdown(socket.SHUT_RDWR)
