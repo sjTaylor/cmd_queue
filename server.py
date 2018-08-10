@@ -11,10 +11,10 @@ logging.basicConfig(format='%(asctime)s | %(name)s | %(levelname)s | %(message)s
 log = logging.getLogger(__name__)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('command_file', help='file with commands that need to be served to clients', type=str)
+parser.add_argument('command_file', help='file with commands that need to be served to clients (one command per line in text file)', type=str)
 parser.add_argument('-p', '--port', help='port for server to listen on', type=int, default=12345)
-parser.add_argument('--working-directory', help='directory commands need to be run from', type=str)
-parser.add_argument('--log-file', help='directory commands need to be run from', type=str, default=None)
+parser.add_argument('--working-directory', help='(currently unused) directory commands need to be run from', type=str)
+parser.add_argument('--log-file', help='currently unused', type=str, default=None)
 args = parser.parse_args()
 
 

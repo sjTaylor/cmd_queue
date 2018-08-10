@@ -1,0 +1,31 @@
+
+#what you need
+
+a text file with all the commands that need to be run split by newlines.
+
+#how to run
+##server.py
+The server has been updated to use argparse, and the command descriptions are pretty self explanitory (port, command-file, etc).
+Note though, that the --working-directory and --log-file flag currently does not do anything.
+
+##client.py
+This one gets a little trickier.
+Since it has not been updated, it must be configured using the `config.py` source file.
+Because of this, you basically need to make your own copy of the repo to run this software as not to interfere with other people.
+
+###Noteable things that need configuring
+
+server_port: port for server
+server_ip: address for the server. Can use things like 'hltrun01'.
+
+working_directory: the directory the program should change to before running commands. For example, commands that involve run-sbt being called, you need to move to the correct source folder beforehand.
+
+cmd_timeout: the maximum time allowed for a command to run in seconds. After the specified number of seconds have passed the execution will be terminated, and an error code is returned to the server.
+
+output_prefix: stderr and stdout for each command run get written to files in the folder specified here (e.g. cmd-00001-stdout.txt)
+padding: the number of digits each number should have. this is to make the commands appear in order for sorted lists. (e.g. 02 instead of 2 so that the 10th command does not appear before the 2nd command when listing the files)
+
+###Unused options for client
+log_file
+wd_is_list
+
