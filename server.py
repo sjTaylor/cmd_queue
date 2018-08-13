@@ -37,10 +37,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
     cmd_dex = 0
     command_list = funs.list_from_file(args.command_file)
 
-    # working_directory = args.working_directory
-    # working_directory = funs.VarList([args.working_directory])
+    running = True
 
-    while True:
+    while running:
         readable, writable, errored = select.select(read_list, [], [], 1)
 
         for qq in funs.getinput():
@@ -48,16 +47,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
                 raise SystemExit
 
         for s in readable:
-            # try:
+            try:
                 client_socket, address = server_socket.accept()
                 last_id += 1
                 clients.append(funs.ClientInterface(client_socket, last_id, config=args))
                 clients[-1].initialize()
                 log.info("new client : id = %s, address = %s" % (clients[-1].id, address))
-            # except:
-            #     import sys
-            #     print("Unexpected error:", sys.exc_info()[0])
-            #     log.info('a potential client could not connect')
+            except:
+                import sys
+                print("Unexpected error:", sys.exc_info()[0], 'for client', address)
+                log.info('a potential client could not connect')
 
         for c in clients:
             try:
@@ -90,4 +89,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         if len(clients) == 0 and cmd_dex >= len(command_list):
             log.info('commands finished. server exiting')
             os.system('sleep 1s')
-            exit()
+            running = False
