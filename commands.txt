@@ -1,10 +1,7 @@
 pwd
-pwd
-pwd
-pwd
-pwd
-pwd
-pwd
-pwd
-ls
-ls /media
+find ~/ -type f
+find ~/ -type d
+du -sh ./
+du -sh ~/
+ls /
+ls ~/

@@ -11,10 +11,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument('command_file', help='file with commands that need to be served to clients '
                                          '(one command per line in text file)', type=str)
 parser.add_argument('-p', '--port', help='port for server to listen on', type=int, default=12345)
-parser.add_argument('--working-directory', help='directory commands need to be run from', type=str, required=True)
+parser.add_argument('--working-directory', help='directory commands need to be run from '
+                                                '(clients will change to the given directory before executing commands)'
+                    , type=str, required=True)
 
-parser.add_argument('--output-directory', help='directory to store output for commands', type=str, required=True)
-parser.add_argument('--cmd-timeout', help='timeout for commands (in seconds)', type=int, default=60)
+parser.add_argument('--output-directory', help='directory to store output for commands (stdout and stderr)',
+                    type=str, required=True)
+parser.add_argument('--cmd-timeout', help='timeout for commands (in seconds). If a command takes longer than the '
+                                          'specified time to run, client will terminate execution and report the '
+                                          'return code to the server.', type=int, default=60)
 parser.add_argument('--num-digits', help='number of digits for cmd output files. padded with zeros if number of digits '
                                          'is less than num_digits (e.g. if num_digits=5 then 12 -> 000012', type=int,
                     default=4)

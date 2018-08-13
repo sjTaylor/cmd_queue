@@ -7,8 +7,8 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('server_ip', type=str)
-parser.add_argument('--server_port', type=int, default=12345, required=False)
+parser.add_argument('server_ip', type=str, help='address of the server (e.g. 198.123.1.3)')
+parser.add_argument('--server_port', type=int, default=12345, required=False, help='port server is listening on')
 args = parser.parse_args()
 
 myid = 0
