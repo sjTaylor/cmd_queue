@@ -12,7 +12,6 @@ parser.add_argument('command_file', help='file with commands that need to be ser
                                          '(one command per line in text file)', type=str)
 parser.add_argument('-p', '--port', help='port for server to listen on', type=int, default=12345)
 parser.add_argument('--working-directory', help='directory commands need to be run from', type=str, required=True)
-parser.add_argument('--log-file', help='currently unused', type=str, default=None)
 
 parser.add_argument('--output-directory', help='directory to store output for commands', type=str, required=True)
 parser.add_argument('--cmd-timeout', help='timeout for commands (in seconds)', type=int, default=60)

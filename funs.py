@@ -8,8 +8,6 @@ import os
 
 
 def get_logger(name):
-    log_format = logging.Formatter(fmt='%(asctime)s | %(name)s | %(levelname)s | %(message)s',
-                                   datefmt='%m/%d/%Y %I:%M:%S %p')
     logging.basicConfig(format='%(asctime)s | %(name)s | %(levelname)s | %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
                         level=logging.DEBUG)
     log = logging.getLogger(name=name)
@@ -45,7 +43,7 @@ class ClientInterface:
         self.initialized = False
         self.config = config
 
-    def initialize(self, wd=None, od=None, to=None):
+    def initialize(self):
         send(self.con, encode(codes.send_config, (self.id, self.config)))
 
     def give_cmd(self, number, command):
@@ -98,8 +96,6 @@ def do_dir(prefix, padding, out_type, cmd_number):
 
 def encode(code, data=None):
     ret = struct.pack('i', code)
-    # if type(data) is str or code in [codes.send_wd, codes.send_od]:
-    #     ret += bytearray(data.encode('utf-8'))
     json_data = {}
     if code in [codes.send_config]:
         args = data[1]
